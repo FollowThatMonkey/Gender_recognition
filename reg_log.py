@@ -1,18 +1,26 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn import preprocessing
 
+## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
+y_labels = ('Mężczyzna', 'Kobieta')
 
-clf = linear_model.LogisticRegressionCV()
-clf_pre = linear_model.LogisticRegressionCV()
+## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
+clf = linear_model.LogisticRegressionCV(solver='newton-cg').fit(X, y)
+print(clf.score(X, y))
+print(clf.scores_)
 
-X_pre = preprocessing.StandardScaler().fit_transform(X)
+## TWORZENIE CONFUSSION MATRICES
+fig, (ax1, ax2) = plt.subplots(2)
+fig.suptitle('Confusion matrices (not)normalized')
 
-clf.fit(X, y)
-clf_pre.fit(X_pre, y)
+ax1.set_title('Nie znormalizowany')
+conf_mat_disp = metrics.plot_confusion_matrix(clf, X, y, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
+ax2.set_title('Znormalizowany względem wartości prawdziwej')
+conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X, y, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
-print("Bez preprocessingu:", clf.score(X, y))
-print("Po preprocessingu:", clf_pre.score(X, y))
+plt.show()
