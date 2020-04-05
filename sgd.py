@@ -22,7 +22,7 @@ print(scores['test_score'].mean())
 best_clf = scores['estimator'][np.argmax(scores['test_score'])]
 
 ## TWORZENIE CONFUSSION MATRICES
-fig, (ax1, ax2) = plt.subplots(1, 2)
+fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle('Confusion matrices (not)normalized')
 
 ax1.set_title('Nie znormalizowany')

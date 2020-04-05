@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import svm
 from sklearn import model_selection
-from sklearn import preprocessing
 from sklearn import metrics
 
 ## WCZYTANIE DANYCH
@@ -11,10 +10,10 @@ X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = svm.SVC()
+clf = svm.SVC(C=1000)
 
 ## CROSS-VALIDACJA
-scores = model_selection.cross_validate(clf, X, y, return_train_score=True, return_estimator=True)
+scores = model_selection.cross_validate(clf, X, y, return_estimator=True)
 print(scores['test_score'])
 print(scores['test_score'].mean())
 
@@ -22,7 +21,7 @@ print(scores['test_score'].mean())
 best_clf = scores['estimator'][np.argmax(scores['test_score'])]
 
 ## TWORZENIE CONFUSSION MATRICES
-fig, (ax1, ax2) = plt.subplots(1, 2)
+fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle('Confusion matrices (not)normalized')
 
 ax1.set_title('Nie znormalizowany')
