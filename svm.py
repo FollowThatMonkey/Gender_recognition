@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import svm
-from sklearn import model_selection
-from sklearn import metrics
+from sklearn import svm, model_selection, metrics
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
