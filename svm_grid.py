@@ -17,11 +17,11 @@ score = model_selection.GridSearchCV(clf, parameters).fit(X, y)
 
 with open('svm_grid_best.csv', 'w') as f:
     w = csv.writer(f)
-    for key, val in score['best_params_']:
+    for key, val in score.best_params_:
         w.writerow([key, val])
         
 with open('svm_grid_score.csv', 'w') as f:
     w = csv.writer(f)
-    for key, val in score['cv_results_']:
+    for key, val in score.cv_results_:
         w.writerow([key, val])
         
