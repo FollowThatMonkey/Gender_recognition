@@ -11,9 +11,9 @@ X, y = data[:, :-1], data[:, -1]
 clf = svm.SVC()
 
 ## UTWORZENIE GRID_SEARCH'A
-parameters = {C: (1e0, 1e1, 1e2, 1e3, 1e4, 1e5)}
+parameters = {'C': (1e0, 1e1, 1e2, 1e3, 1e4, 1e5)}
 
-score = model_selection.GridSearchCV(clf, parameters)
+score = model_selection.GridSearchCV(clf, parameters).fit(X, y)
 
 with open('svm_grid_best.csv', 'w') as f:
     w = csv.writer(f)

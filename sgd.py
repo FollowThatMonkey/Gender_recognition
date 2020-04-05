@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model
+from sklearn import linear_model, model_selection, metrics
 from sklearn import model_selection
-from sklearn import preprocessing
 from sklearn import metrics
 
 ## WCZYTANIE DANYCH
