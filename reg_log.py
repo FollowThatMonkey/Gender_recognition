@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import linear_model
 from sklearn import metrics
-from sklearn import preprocessing
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
