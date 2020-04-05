@@ -16,13 +16,19 @@ parameters = {
     'loss': ('hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron'),
     'fit_intercept': (True, False),
     'alpha': (1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3),
-    'n_jobs': (-1,)
+    'n_jobs': (-1,),
+    'max_iter': (100, 1000, 10000)
 }
 sdg = linear_model.SGDClassifier()
 clf = model_selection.GridSearchCV(sdg, parameters)
 clf.fit(X, y)
 
-w = csv.writer(open("output.csv", 'w'))
+w = csv.writer(open("cv_results_sgd.csv", 'w'))
 for key, val in clf.cv_results_.items():
     w.writerow([key, val])
+    
+w = csv.writer(open("best_params_sgd.csv", 'w'))
+for key, val in clf.best_params_.items():
+    w.writerow([key, val])
 
+print("Najlepszy wynik:", clf.best_score_)
