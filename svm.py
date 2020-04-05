@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model
+from sklearn import svm
 from sklearn import model_selection
 from sklearn import preprocessing
 from sklearn import metrics
@@ -11,7 +11,7 @@ X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = linear_model.SGDClassifier(loss='squared_hinge', alpha=100, fit_intercept=False, n_jobs=-1)
+clf = svm.SVC()
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X, y, return_train_score=True, return_estimator=True)

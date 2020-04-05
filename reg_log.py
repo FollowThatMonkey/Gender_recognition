@@ -10,7 +10,7 @@ X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
-clf = linear_model.LogisticRegressionCV(solver='newton-cg').fit(X, y)
+clf = linear_model.LogisticRegressionCV().fit(X, y)
 print(clf.score(X, y))
 print(clf.scores_)
 
