@@ -8,7 +8,7 @@ X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = svm.SVC(C=2e4, verbose=True)
+clf = svm.SVC(C=2e4)
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X, y, return_estimator=True)
