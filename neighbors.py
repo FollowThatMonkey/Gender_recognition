@@ -8,7 +8,7 @@ X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = neighbors.KNeighborsClassifier(n_neighbors=5, weights='distance', n_jobs=-1)
+clf = neighbors.KNeighborsClassifier(n_neighbors=280, n_jobs=-1)
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X, y, return_estimator=True)
