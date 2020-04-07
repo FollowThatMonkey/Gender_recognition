@@ -1,0 +1,3 @@
+Dzień dobry,
+Mam pytnie odnośnie wykonania projektu "Klasyfikacjia płci na podstawie cech twarzy" w ramach laboratorium specjalistycznego.
+1) Dla klasyfikatora bazującego na regresjii logistycznej 
