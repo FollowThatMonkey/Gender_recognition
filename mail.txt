@@ -1,8 +1,0 @@
-Dzień dobry,
-Mam pytnie odnośnie wykonania projektu "Klasyfikacjia płci na podstawie cech twarzy" w ramach laboratorium specjalistycznego.
-1) Mam pytanie odnośnie danych. Po wykreśleniu wszystkich twarzy można stwierdzić iż nie są one ustandaryzowane. Twarze nie znajdują się w mniej-więcej jednym miejscu, są różnych rozmiarów oraz ustawione pod różnym kątem (ilustracje odnośnie tego zamieszczam w załączniku - na jednym z obrazków są wykreślone wszystkie twarze z podziałem na płcie, natomiast na drugim obrazku wykreślono dwie pierwsze twarze). Stąd moje pytanie, czy ma to wpływ na uzyskane wyniki klasyfikacji? Próbowałem przerabiać dane przez "sklearn.preprocessing", lecz skuteczność klasyfikatorów jedynie malała (choć możliwe, że zrobiłem to nieprawidłowo - tu nie mam pojęcia).
-2) Jak ma wyglądać opis użytych metod klasyfikacji? Przeglądając internet natrafiłem na cały przedmiot z FUW'u gdzie opisano zaledwie część użytych przez nas klasyfikatorów, a zakres tego materiału to ok. pół semestru - rozumiem, że nie o taki rodzaj opisu chodzi, gdyż byłoby to niezwykle obszerne.
-3) Mam problem ze znalezieniem odpowiedniej wartości parametru 'C' dla klasyfikatora 'SVC()' (z tego też względu zdecydowałem się na klasyfikator 'NuSVC()'). Szukam dobrej wartości parametru przez 'GridSearchCV()', jednakże dla klasyfikatorów support vector machines liczy się to niezwykle długo. Czy jest jakiś lepszy sposób żeby oszacować dobrą wartość tego parametru? Dodam, że ze znaleziona wartość parametru 'C' dająca względnie dobre wyniki ma wartość 10tys. co chyba jest dość sporą wartością?
-
-Z poważaniem,
-Rafał Jarmakiewicz
