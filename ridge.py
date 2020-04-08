@@ -11,7 +11,7 @@ y_labels = ('Mężczyzna', 'Kobieta')
 clf = linear_model.RidgeClassifier()
 
 ## CROSS-VALIDACJA
-scores = model_selection.cross_validate(clf, X, y, return_estimator=True)
+scores = model_selection.cross_validate(clf, X, y, return_estimator=True, n_jobs=-1)
 print(scores['test_score'])
 print(scores['test_score'].mean())
 

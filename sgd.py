@@ -13,7 +13,7 @@ y_labels = ('Mężczyzna', 'Kobieta')
 clf = linear_model.SGDClassifier(loss='squared_hinge', alpha=100, fit_intercept=False, n_jobs=-1)
 
 ## CROSS-VALIDACJA
-scores = model_selection.cross_validate(clf, X, y, return_train_score=True, return_estimator=True)
+scores = model_selection.cross_validate(clf, X, y, return_train_score=True, return_estimator=True, n_jobs=-1)
 print(scores['test_score'])
 print(scores['test_score'].mean())
 
