@@ -19,7 +19,7 @@ for row, val in enumerate(y):
 X = preprocessing.Normalizer().fit_transform(X)
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = linear_model.Perceptron(n_jobs=-1)
+clf = linear_model.Perceptron(alpha=1e-5, n_jobs=-1)
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X, y, return_estimator=True, n_jobs=-1)

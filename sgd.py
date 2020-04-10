@@ -1,14 +1,25 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model, model_selection, metrics
+from sklearn import linear_model, model_selection, metrics, preprocessing
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
+## PREPROCESSING
+for row, val in enumerate(y):
+    x0, y0 = X[row, 0], X[row, 1]
+    
+    for indx, val in enumerate(X[row, :]):
+        if indx%2 == 0:
+            X[row, indx] -= x0
+        else:
+            X[row, indx] -= y0
+X = preprocessing.Normalizer().fit_transform(X)
+
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = linear_model.SGDClassifier(loss='squared_hinge', alpha=100, fit_intercept=False, n_jobs=-1)
+clf = linear_model.SGDClassifier(loss='squared_hinge', alpha=5e-06, n_jobs=-1)
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X, y, return_train_score=True, return_estimator=True, n_jobs=-1)
