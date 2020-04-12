@@ -1,0 +1,4 @@
+alpha,3.777777777777778e-08
+fit_intercept,False
+loss,log
+max_iter,50000

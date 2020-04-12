@@ -1,9 +1,13 @@
+import matplotlib.pyplot as pyplot
 import numpy as np
-import matplotlib.pyplot as plt
+from sklearn import neighbors, model_selection, preprocessing
+import csv
 
+## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
 
+## PREPROCESSING
 ## usunięcie złej twarzyczki
 X = np.delete(X, (8656), axis=0)
 y = np.delete(y, (8656), axis=0)
@@ -30,3 +34,24 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
+
+## UTWORZENIE OBIEKTU KLASYFIKATORA
+clf = neighbors.KNeighborsClassifier()
+
+## UTWORZENIE GRID_SEARCH'A
+n_neighbors = np.linspace(50, 80, 40, dtype=int)
+parameters = {'n_neighbors': n_neighbors, 'n_jobs': (-1,)}
+
+score = model_selection.GridSearchCV(clf, parameters, n_jobs=-1)
+score.fit(X, y)
+
+with open('wyniki/neighbors_najlepszy.csv', 'w') as f:
+    w = csv.writer(f)
+    for key, val in score.best_params_.items():
+        w.writerow([key, val])
+        
+with open('wyniki/neighbors_wyniki.csv', 'w') as f:
+    w = csv.writer(f)
+    for key, val in score.cv_results_.items():
+        w.writerow([key, val])
+        
