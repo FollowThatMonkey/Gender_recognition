@@ -39,8 +39,9 @@ for row in range(len(y)):
 clf = svm.NuSVC()
 
 ## UTWORZENIE GRID_SEARCH'A
-nu = np.linspace(0.5, 0.56, 10)
+nu = np.linspace(0.5, 0.56, 3)
 kernel = ('linear', 'rbf')
+
 parameters = {'kernel': kernel, 'nu': nu}
 
 score = model_selection.GridSearchCV(clf, parameters, n_jobs=-1)

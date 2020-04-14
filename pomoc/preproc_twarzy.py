@@ -30,3 +30,6 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
+
+    plt.plot(xx, yy, 'bo', ms=0.2)
+plt.show()
