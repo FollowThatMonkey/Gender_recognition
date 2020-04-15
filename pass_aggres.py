@@ -7,6 +7,10 @@ data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
 
+## Liczba mężczyzn/kobiet
+print("Liczba mężczyzn:", len(y[y==0]))
+print("Liczba kobiet:", len(y[y==1]))
+
 ## PREPROCESSING
 ## usunięcie złej twarzyczki
 X = np.delete(X, (8656), axis=0)
@@ -35,24 +39,28 @@ for row in range(len(y)):
     X[row, ::2] = xx
     X[row, 1::2] = yy
 
+## Rozdzielenie danych do późniejszego liczenia 'accuracy' i 'confusion matrix'
+X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.1, stratify = y)
+
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
 clf = linear_model.PassiveAggressiveClassifier(C=60.69620253164557, fit_intercept=False, max_iter=10000, n_jobs=-1)
 
 ## CROSS-VALIDACJA
-scores = model_selection.cross_validate(clf, X, y, return_estimator=True, n_jobs=-1)
-print(scores['test_score'])
-print(scores['test_score'].mean())
+scores = model_selection.cross_validate(clf, X_train, y_train, return_estimator=True, n_jobs=-1)
+print('The score array for test scores on each cv split:', scores['test_score'])
+print('Mean of above:', scores['test_score'].mean())
 
 ## WYBRANIE NAJLEPSZEGO ESTYMATORA I PREDYKCJA DLA WSZYTKICH DANYCH
 best_clf = scores['estimator'][np.argmax(scores['test_score'])]
+print('Accuracy on final set:', best_clf.score(X_test, y_test))
 
 ## TWORZENIE CONFUSSION MATRICES
 fig, (ax1, ax2) = plt.subplots(2)
-fig.suptitle('Confusion matrices (not)normalized')
+fig.suptitle('Confusion matrices')
 
 ax1.set_title('Nie znormalizowany')
-conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X, y, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
 ax2.set_title('Znormalizowany względem wartości prawdziwej')
-conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X, y, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
 plt.show()

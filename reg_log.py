@@ -1,11 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model, metrics, preprocessing, decomposition
+from sklearn import linear_model, metrics, preprocessing, decomposition, model_selection
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
+
+## Liczba mężczyzn/kobiet
+print("Liczba mężczyzn:", len(y[y==0]))
+print("Liczba kobiet:", len(y[y==1]))
 
 ## PREPROCESSING
 ## usunięcie złej twarzyczki
@@ -36,20 +40,21 @@ for row in range(len(y)):
     X[row, 1::2] = yy
 X = decomposition.PCA().fit_transform(X)
 
+## Rozdzielenie danych do późniejszego liczenia 'accuracy' i 'confusion matrix'
+X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.1, stratify = y)
+
 ## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
 Cs = np.linspace(10, 12, 60)
-clf = linear_model.LogisticRegressionCV(Cs = Cs, fit_intercept=True, max_iter=10000, n_jobs=-1).fit(X, y)
-print(clf.score(X, y))
-print(clf.scores_)
-print(clf.C_)
+clf = linear_model.LogisticRegressionCV(Cs = Cs, fit_intercept=True, max_iter=10000, n_jobs=-1).fit(X_train, y_train)
+print('Accuracy on final set:', clf.score(X_test, y_test))
 
 ## TWORZENIE CONFUSSION MATRICES
 fig, (ax1, ax2) = plt.subplots(2)
-fig.suptitle('Confusion matrices (not)normalized')
+fig.suptitle('Confusion matrices')
 
 ax1.set_title('Nie znormalizowany')
-conf_mat_disp = metrics.plot_confusion_matrix(clf, X, y, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
+conf_mat_disp = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
 ax2.set_title('Znormalizowany względem wartości prawdziwej')
-conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X, y, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
+conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
 plt.show()
