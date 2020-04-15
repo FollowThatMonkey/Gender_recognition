@@ -1,11 +1,15 @@
 import numpy as np
-from sklearn import linear_model, metrics
+from sklearn import linear_model, metrics, model_selection
 import matplotlib.pyplot as plt
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
 X, y = data[:, :-1], data[:, -1]
 y_labels = ('Mężczyzna', 'Kobieta')
+
+## Liczba mężczyzn/kobiet
+print("Liczba mężczyzn:", len(y[y==0]))
+print("Liczba kobiet:", len(y[y==1]))
 
 ## PREPROCESSING
 ## usunięcie złej twarzyczki
@@ -17,34 +21,20 @@ X[:, 1::2] -= X[:, 1].reshape((X.shape[0], 1))
 ## rotacja
 for row in range(len(y)):
     xx, yy = X[row, ::2], X[row, 1::2]
-    xa, xb = xx[72], xx[105]
+    xa, xb = xx[72], xx[105] # źrenice - w celu wyznaczenia kąta rotacji
     ya, yb = yy[72], yy[105]
 
     theta = -np.arctan((ya-yb)/(xa-xb))
-    if (ya-yb)/(xa-xb) < -8:
+    if (ya-yb)/(xa-xb) < -8: # jedna z twarzy jest pod +/-kątem prostym w lewo - ten warunek (trochę bezmyślny) pozwala poprawnie tę twarz przekręcić
         theta -= np.pi
     
     R = np.array([[np.cos(theta), -np.sin(theta)],
                   [np.sin(theta), np.cos(theta)]])
     
     xx, yy = np.dot(R, [xx, yy])
-## skalowanie
-    xx /= max(np.absolute(xx))
-    yy /= max(np.absolute(yy))
-## przypisanie do X
+## ponowne przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
-
-# usuwanie twarzyczki gdy oczko < delta
-row = 0
-delta = 0.035
-while row < len(y):
-    xx, yy = X[row, ::2], X[row, 1::2]
-    if yy[34]-yy[3] < delta or yy[41]-yy[43] < delta:
-        X = np.delete(X, (row), axis=0)
-        y = np.delete(y, (row), axis=0)
-        row -= 1
-    row += 1
 
 # Liczenie FWHR
 width, height = np.zeros((len(y), 1)), np.zeros((len(y), 1))
@@ -60,10 +50,10 @@ for row, val in enumerate(y):
     height[row] = meanup-meandown
 fwhr = width/height
 
-# usuwanie twarzyczki gdy fwhr <3.1 lub >5.5
+# usuwanie twarzyczki gdy fwhr <1.5 lub >3.15
 row = 0
 while row < len(y):
-    if fwhr[row] < 3.1 or fwhr[row] > 5.5:
+    if fwhr[row] < 1.5 or fwhr[row] > 3.15:
         y = np.delete(y, (row), axis=0)
         fwhr = np.delete(fwhr, (row), axis=0)
         width = np.delete(width, (row), axis=0)
@@ -71,6 +61,25 @@ while row < len(y):
         row -= 1
     row += 1
 
-for row, val in enumerate(y):
-    plt.plot(X[row,::2], X[row,1::2], 'bo')
-    plt.show()
+## Rozdzielenie danych do późniejszego liczenia 'accuracy', 'confusion matrix' oraz 'ROC'
+X_train, X_test, y_train, y_test = model_selection.train_test_split(fwhr, y, test_size = 0.1, stratify = y) #stratify żeby starał się po równo rozdzielić klasy
+
+## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
+clf = linear_model.LogisticRegressionCV(max_iter=10000, n_jobs=-1).fit(X_train, y_train)
+print('Accuracy:', clf.score(X_test, y_test))
+
+## CONFUSION MATRICES
+fig, (ax1, ax2) = plt.subplots(2)
+fig.suptitle('Confusion matrices')
+
+ax1.set_title('Nie znormalizowany')
+conf_mat_disp = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
+ax2.set_title('Znormalizowany względem wartości prawdziwej')
+conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
+plt.show()
+# prawdopodobnie przypisuje wszystko kobietom, bo ich danych jest więcej!?
+
+## KRZYWA ROC
+roc = metrics.plot_roc_curve(clf, X_test, y_test)
+plt.show()
+# kształt TPR=FPR wskazuje na zupełnie losową klasyfikację
