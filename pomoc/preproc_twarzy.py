@@ -31,5 +31,7 @@ for row in range(len(y)):
     X[row, ::2] = xx
     X[row, 1::2] = yy
 
-    plt.plot(xx, yy, 'bo', ms=0.2)
+    plt.plot(xx, yy, 'bo', ms=0.1)
+plt.gcf().set_size_inches(8, 9)
+plt.savefig('obrazki/wszystkie_twarze.png')
 plt.show()

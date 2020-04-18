@@ -55,6 +55,7 @@ best_clf = scores['estimator'][np.argmax(scores['test_score'])]
 print('Accuracy on final set:', best_clf.score(X_test, y_test))
 
 ## TWORZENIE CONFUSSION MATRICES
+'''
 fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle('Confusion matrices')
 
@@ -63,4 +64,15 @@ conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_
 ax2.set_title('Znormalizowany względem wartości prawdziwej')
 conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
+plt.show()
+'''
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues)
+plt.gcf().suptitle('Tablica pomyłek dla klasyfikatora SGD')
+plt.savefig('wykresy/sgd_conf.png')
+plt.show()
+
+## KRZYWA ROC
+roc = metrics.plot_roc_curve(best_clf, X_test, y_test)
+plt.gcf().suptitle('Krzywa ROC dla klasyfikatora SGD')
+plt.savefig('wykresy/sgd_roc.png')
 plt.show()

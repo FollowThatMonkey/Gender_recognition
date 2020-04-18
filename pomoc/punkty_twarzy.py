@@ -13,6 +13,8 @@ xx, yy = X[row, ::2], X[row, 1::2]
 plt.plot(xx, yy, 'bo')
 
 for indx in range(len(xx)):
-    plt.annotate(str(indx), (xx[indx], yy[indx]))
+    plt.annotate(str(indx), (xx[indx], yy[indx]), fontweight = 'book')
+plt.gcf().set_size_inches(8, 9)
+plt.savefig('obrazki/twarz.png')
 
 plt.show()

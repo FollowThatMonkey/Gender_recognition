@@ -61,11 +61,24 @@ while row < len(y):
         row -= 1
     row += 1
 
+# rozdzielenie danych po równo
+fwhr_y = np.hstack((fwhr, y.reshape((len(y), 1))))
+fwhr_men, fwhr_women = fwhr_y[y==0], fwhr_y[y==1]
+print('fwhr men:', fwhr_men.shape)
+print('fwhr women:', fwhr_women.shape)
+for i in range(5): np.random.shuffle(fwhr_women)
+fwhr_women = fwhr_women[:fwhr_men.shape[0], :]
+fwhr = np.vstack((fwhr_men, fwhr_women))
+for i in range(5): np.random.shuffle(fwhr)
+fwhr, y = fwhr[:,0], fwhr[:,1]
+fwhr.shape = len(fwhr), 1
+
 ## Rozdzielenie danych do późniejszego liczenia 'accuracy', 'confusion matrix' oraz 'ROC'
 X_train, X_test, y_train, y_test = model_selection.train_test_split(fwhr, y, test_size = 0.1, stratify = y) #stratify żeby starał się po równo rozdzielić klasy
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
-clf = linear_model.LogisticRegressionCV(max_iter=10000, n_jobs=-1).fit(X_train, y_train)
+Cs = np.linspace(1e-10, 1, 50)
+clf = linear_model.LogisticRegressionCV(Cs = Cs, max_iter=10000, n_jobs=-1).fit(X_train, y_train)
 print('Accuracy:', clf.score(X_test, y_test))
 
 ## CONFUSION MATRICES
