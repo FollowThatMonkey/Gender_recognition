@@ -38,13 +38,12 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
-X = decomposition.PCA().fit_transform(X) # dekompozycja PCA
 
 ## Rozdzielenie danych do późniejszego liczenia 'accuracy' i 'confusion matrix'
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.1, stratify = y)
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
-clf = svm.NuSVC(nu=0.535)
+clf = svm.NuSVC(nu=0.512)
 
 ## CROSS-VALIDACJA
 scores = model_selection.cross_validate(clf, X_train, y_train, return_estimator=True, n_jobs=-1)
@@ -56,6 +55,7 @@ best_clf = scores['estimator'][np.argmax(scores['test_score'])]
 print('Accuracy on final set:', best_clf.score(X_test, y_test))
 
 ## TWORZENIE CONFUSSION MATRICES
+'''
 fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle('Confusion matrices')
 
@@ -64,4 +64,15 @@ conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_
 ax2.set_title('Znormalizowany względem wartości prawdziwej')
 conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
+plt.show()
+'''
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues)
+plt.gcf().suptitle('Tablica pomyłek dla klasyfikatora NuSVC')
+plt.savefig('wykresy/nusvc_conf.png')
+plt.show()
+
+## KRZYWA ROC
+roc = metrics.plot_roc_curve(best_clf, X_test, y_test)
+plt.gcf().suptitle('Krzywa ROC dla klasyfikatora NuSVC')
+plt.savefig('wykresy/nusvc_roc.png')
 plt.show()

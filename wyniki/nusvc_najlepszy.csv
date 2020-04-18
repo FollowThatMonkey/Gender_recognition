@@ -1,2 +1,2 @@
-kernel,rbf
-nu,0.53
+kernel,linear
+nu,0.5428571428571429

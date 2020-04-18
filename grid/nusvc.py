@@ -34,12 +34,13 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
+X = decomposition.PCA().fit_transform(X) # dekompozycja PCA
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA
 clf = svm.NuSVC()
 
 ## UTWORZENIE GRID_SEARCH'A
-nu = np.linspace(0.5, 0.56, 3)
+nu = np.linspace(0.5, 0.56, 8)
 kernel = ('linear', 'rbf')
 
 parameters = {'kernel': kernel, 'nu': nu}

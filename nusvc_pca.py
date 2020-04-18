@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import linear_model, metrics, preprocessing, decomposition, model_selection
+from sklearn import svm, model_selection, metrics, preprocessing, decomposition
 
 ## WCZYTANIE DANYCH
 data = np.load('dane/pure_landmarks_gender.npy')
@@ -38,15 +38,22 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
+X = decomposition.PCA().fit_transform(X) # dekompozycja PCA
 
 ## Rozdzielenie danych do późniejszego liczenia 'accuracy' i 'confusion matrix'
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.1, stratify = y)
 
-## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
-Cs = np.linspace(14, 20, 500)
-clf = linear_model.LogisticRegressionCV(Cs = Cs, fit_intercept=True, max_iter=10000, n_jobs=-1).fit(X_train, y_train)
-print('Accuracy on final set:', clf.score(X_test, y_test))
-print('Best C:', clf.C_)
+## UTWORZENIE OBIEKTU KLASYFIKATORA
+clf = svm.NuSVC(nu=0.5428571428571429, kernel='linear')
+
+## CROSS-VALIDACJA
+scores = model_selection.cross_validate(clf, X_train, y_train, return_estimator=True, n_jobs=-1)
+print('The score array for test scores on each cv split:', scores['test_score'])
+print('Mean of above:', scores['test_score'].mean())
+
+## WYBRANIE NAJLEPSZEGO ESTYMATORA I PREDYKCJA DLA WSZYTKICH DANYCH
+best_clf = scores['estimator'][np.argmax(scores['test_score'])]
+print('Accuracy on final set:', best_clf.score(X_test, y_test))
 
 ## TWORZENIE CONFUSSION MATRICES
 '''
@@ -54,19 +61,19 @@ fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle('Confusion matrices')
 
 ax1.set_title('Nie znormalizowany')
-conf_mat_disp = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues, ax=ax1)
 ax2.set_title('Znormalizowany względem wartości prawdziwej')
-conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, normalize='true', cmap=plt.cm.Blues, ax=ax2)
 
 plt.show()
 '''
-conf_mat_disp = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues)
-plt.gcf().suptitle('Tablica pomyłek dla regresji logistycznej')
-plt.savefig('wykresy/reg_log_conf.png')
+conf_mat_disp = metrics.plot_confusion_matrix(best_clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues)
+plt.gcf().suptitle('Tablica pomyłek dla klasyfikatora NuSVC po transformacji PCA')
+plt.savefig('wykresy/nusvc_pca_conf.png')
 plt.show()
 
 ## KRZYWA ROC
-roc = metrics.plot_roc_curve(clf, X_test, y_test)
-plt.gcf().suptitle('Krzywa ROC dla regresji logistycznej')
-plt.savefig('wykresy/reg_log_roc.png')
+roc = metrics.plot_roc_curve(best_clf, X_test, y_test)
+plt.gcf().suptitle('Krzywa ROC dla klasyfikatora NuSVC po transformacji PCA')
+plt.savefig('wykresy/nusvc_pca_roc.png')
 plt.show()

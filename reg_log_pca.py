@@ -38,12 +38,13 @@ for row in range(len(y)):
 ## przypisanie do X
     X[row, ::2] = xx
     X[row, 1::2] = yy
+X = decomposition.PCA().fit_transform(X)
 
 ## Rozdzielenie danych do późniejszego liczenia 'accuracy' i 'confusion matrix'
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size = 0.1, stratify = y)
 
 ## UTWORZENIE OBIEKTU KLASYFIKATORA WRAZ Z CROSS-VALIDACJĄ
-Cs = np.linspace(14, 20, 500)
+Cs = np.linspace(10, 40, 500)
 clf = linear_model.LogisticRegressionCV(Cs = Cs, fit_intercept=True, max_iter=10000, n_jobs=-1).fit(X_train, y_train)
 print('Accuracy on final set:', clf.score(X_test, y_test))
 print('Best C:', clf.C_)
@@ -61,12 +62,12 @@ conf_mat_disp_normalized = metrics.plot_confusion_matrix(clf, X_test, y_test, di
 plt.show()
 '''
 conf_mat_disp = metrics.plot_confusion_matrix(clf, X_test, y_test, display_labels=y_labels, cmap=plt.cm.Blues)
-plt.gcf().suptitle('Tablica pomyłek dla regresji logistycznej')
-plt.savefig('wykresy/reg_log_conf.png')
+plt.gcf().suptitle('Tablica pomyłek dla regresji logistycznej po transformacji PCA')
+plt.savefig('wykresy/reg_log_pca_conf.png')
 plt.show()
 
 ## KRZYWA ROC
 roc = metrics.plot_roc_curve(clf, X_test, y_test)
-plt.gcf().suptitle('Krzywa ROC dla regresji logistycznej')
-plt.savefig('wykresy/reg_log_roc.png')
+plt.gcf().suptitle('Krzywa ROC dla regresji logistycznej po transformacji PCA')
+plt.savefig('wykresy/reg_log_pca_roc.png')
 plt.show()
